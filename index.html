@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* --- CORE STYLES & LIGHT THEME --- */
@@ -55,10 +55,11 @@
         }
         .page.active { visibility: visible; opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
 
-        h1, h2, h3 { font-family: 'Pacifico', cursive; font-weight: normal; margin-bottom: 15px; letter-spacing: 1px; line-height: 1.4; }
-        h1 { font-size: 3rem; color: #E65100; text-shadow: 2px 2px 4px rgba(230, 81, 0, 0.15); }
-        h2 { font-size: 1.8rem; color: #D84315; }
-        h3 { font-size: 1.5rem; }
+        /* --- UPDATED HEADING FONTS --- */
+        h1, h2, h3 { font-family: 'Caveat', cursive; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; line-height: 1.2; }
+        h1 { font-size: 4rem; color: #E65100; text-shadow: 2px 2px 4px rgba(230, 81, 0, 0.15); }
+        h2 { font-size: 2.6rem; color: #D84315; }
+        h3 { font-size: 2rem; }
         p { font-size: 1.1rem; margin-bottom: 15px; font-weight: 600; opacity: 0.9; }
 
         button {
@@ -112,21 +113,21 @@
         .twinkle { animation: twinkleAnim 1s ease-in-out infinite alternate; transform-origin: center; }
         @keyframes twinkleAnim { 0% { opacity: 0.2; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1.1); } }
 
-        /* --- THE LOVE NOTE (Page 7 - UPDATED TO BE SMALLER) --- */
+        /* --- THE LOVE NOTE (Page 7) --- */
         .love-note {
             background: #FFFDE7;
             color: #4E342E;
-            padding: 15px; /* Tighter padding */
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            font-size: 0.9rem; /* Smaller font to fit screen perfectly */
+            font-size: 0.95rem;
             line-height: 1.4;
             font-family: 'Quicksand', sans-serif;
-            font-weight: 700; /* Bolder so it stays very readable */
+            font-weight: 700;
             text-align: left;
             margin: 5px 0 10px 0;
             position: relative;
-            transform: rotate(-1deg); /* Reduced tilt to save vertical space */
+            transform: rotate(-1deg);
             border: 3px solid #FFF;
         }
 
@@ -160,7 +161,7 @@
         .slider-container { width: 100%; margin: 10px 0; touch-action: none; }
         input[type="range"] { -webkit-appearance: none; width: 100%; height: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 10px; outline: none; margin-top: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; border-radius: 50%; background: #FF9800; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 152, 0, 0.5); border: 2px solid #FFF; }
-        #sliderValueDisplay { font-family: 'Pacifico', cursive; font-size: 3.2rem; color: #E65100; display: block; margin-top: 5px; transition: color 0.3s; text-shadow: 2px 2px 0px rgba(255,255,255,0.5); }
+        #sliderValueDisplay { font-family: 'Caveat', cursive; font-size: 4rem; color: #E65100; display: block; margin-top: -5px; transition: color 0.3s; text-shadow: 2px 2px 0px rgba(255,255,255,0.5); }
 
         /* --- LIGHT INPUTS --- */
         .input-box { 
@@ -612,8 +613,8 @@
 
             const message = `Hey! I finished your website! 🐧🌻\n\n` +
                             `How much I'll miss you: ${sliderValue}/10\n` +
-                            `Favorite moment: ${moment}\n` +
-                            `And... ${confession}`;
+                            `Say it back: ${moment}\n` +
+                            `Anything else: ${confession}`;
 
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
             window.location.href = whatsappUrl;
