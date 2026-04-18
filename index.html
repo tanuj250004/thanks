@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>For You ❤️</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE STYLES & LIGHT THEME --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body { 
+            width: 100vw; height: 100dvh; 
+            overflow: hidden; 
+            overscroll-behavior: none; 
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent; 
+            
+            font-family: 'Quicksand', sans-serif; 
+            color: #4E342E; 
+            background: linear-gradient(-45deg, #FFFDE4, #FFE0B2, #FFD54F, #FFCC80);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite; position: relative;
+        }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* Dynamic Floating Elements */
+        .bg-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .floating-item { position: absolute; bottom: -100px; animation: floatUp linear infinite; }
+        @keyframes floatUp { 
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 
+            15% { opacity: 0.7; } 
+            85% { opacity: 0.7; } 
+            100% { transform: translateY(-120vh) rotate(360deg) scale(1.2); opacity: 0; } 
+        }
+
+        /* Springy Page Layout with iPhone Safe Areas */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100dvh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            padding-left: max(20px, env(safe-area-inset-left));
+            padding-right: max(20px, env(safe-area-inset-right));
+            
+            text-align: center; z-index: 10;
+            visibility: hidden; opacity: 0; pointer-events: none; 
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.7s;
+        }
+        .page.active { visibility: visible; opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+
+        h1, h2, h3 { font-family: 'Pacifico', cursive; font-weight: normal; margin-bottom: 15px; letter-spacing: 1px; line-height: 1.4; }
+        h1 { font-size: 3rem; color: #E65100; text-shadow: 2px 2px 4px rgba(230, 81, 0, 0.15); }
+        h2 { font-size: 1.8rem; color: #D84315; }
+        h3 { font-size: 1.5rem; }
+        p { font-size: 1.1rem; margin-bottom: 15px; font-weight: 600; opacity: 0.9; }
+
+        button {
+            background: linear-gradient(135deg, #FF9800, #F57C00); color: #FFF; 
+            border: none; padding: 14px 35px; border-radius: 50px; 
+            font-size: 1.1rem; font-family: 'Quicksand', sans-serif; font-weight: 700;
+            margin-top: 15px; cursor: pointer; transition: all 0.3s ease; 
+            box-shadow: 0 6px 20px rgba(245, 124, 0, 0.4);
+            touch-action: manipulation; 
+        }
+        button:active { transform: scale(0.92); box-shadow: 0 2px 10px rgba(245, 124, 0, 0.4); }
+
+        /* Bright Frosted Glass */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 30px 20px; width: 100%; max-width: 350px; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* --- PENGUIN ANIMATIONS --- */
+        .penguin-svg { width: 190px; height: 190px; margin-bottom: 10px; overflow: visible; filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.15)); }
+        .bounce { animation: gentleBounce 2.5s ease-in-out infinite; }
+        @keyframes gentleBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .shake { animation: panicShake 0.3s ease-in-out infinite; }
+        @keyframes panicShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-4deg); } 75% { transform: translateX(6px) rotate(4deg); } }
+        
+        .beating-heart { transform-origin: center; animation: beat 0.8s ease-in-out infinite alternate; }
+        @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+
+        .blink { animation: blinkAnim 4s infinite; }
+        @keyframes blinkAnim { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
+
+        .click-arm { animation: pressButton 0.3s ease-in-out; }
+        @keyframes pressButton { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(8deg) translateY(3px); } }
+        .click-lens { animation: focusLens 0.3s ease-in-out; }
+        @keyframes focusLens { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); fill: #3498DB; } }
+        
+        /* Teardrop Animation */
+        @keyframes tearDrop { 0% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(12px); opacity: 0; } 100% { transform: translateY(0); opacity: 0; } }
+
+        /* Dancing Animations */
+        .dance-partner { animation: waltzDance 1.8s ease-in-out infinite alternate; }
+        @keyframes waltzDance { 
+            0% { transform: rotate(-8deg) translateY(0px); } 
+            50% { transform: rotate(0deg) translateY(-12px); } 
+            100% { transform: rotate(8deg) translateY(0px); } 
+        }
+        .twinkle { animation: twinkleAnim 1s ease-in-out infinite alternate; transform-origin: center; }
+        @keyframes twinkleAnim { 0% { opacity: 0.2; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1.1); } }
+
+        /* --- THE LOVE NOTE (Page 7 - UPDATED TO BE SMALLER) --- */
+        .love-note {
+            background: #FFFDE7;
+            color: #4E342E;
+            padding: 15px; /* Tighter padding */
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-size: 0.9rem; /* Smaller font to fit screen perfectly */
+            line-height: 1.4;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700; /* Bolder so it stays very readable */
+            text-align: left;
+            margin: 5px 0 10px 0;
+            position: relative;
+            transform: rotate(-1deg); /* Reduced tilt to save vertical space */
+            border: 3px solid #FFF;
+        }
+
+        /* --- SINGLE POLAROID --- */
+        .single-polaroid {
+            width: 260px; height: 260px; margin: 10px auto 20px auto;
+            perspective: 1000px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+        }
+        .single-polaroid-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d;
+        }
+        .single-polaroid.flipped .single-polaroid-inner { transform: rotateY(180deg); }
+        .single-polaroid-front, .single-polaroid-back {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; border: 4px solid #FFF;
+        }
+        .single-polaroid-front { background: #FFF; }
+        .single-polaroid-front img, .single-polaroid-front video { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+        .single-polaroid-back {
+            transform: rotateY(180deg); display: flex; align-items: center; justify-content: center;
+            padding: 20px; text-align: center; color: #4E342E; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1rem; background: #FFF8E1; line-height: 1.5;
+        }
+
+        #screenFlash { position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; background: white; border-radius: 20px; z-index: 50; opacity: 0; pointer-events: none; }
+        .flash-active { animation: cameraFlashAnim 0.7s ease-out forwards; }
+        @keyframes cameraFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* --- LIGHT THEME SLIDER --- */
+        .slider-container { width: 100%; margin: 10px 0; touch-action: none; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 10px; outline: none; margin-top: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; border-radius: 50%; background: #FF9800; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 152, 0, 0.5); border: 2px solid #FFF; }
+        #sliderValueDisplay { font-family: 'Pacifico', cursive; font-size: 3.2rem; color: #E65100; display: block; margin-top: 5px; transition: color 0.3s; text-shadow: 2px 2px 0px rgba(255,255,255,0.5); }
+
+        /* --- LIGHT INPUTS --- */
+        .input-box { 
+            width: 100%; padding: 16px; margin: 8px 0; border-radius: 15px; border: none; 
+            font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.85); color: #4E342E; 
+            font-family: 'Quicksand', sans-serif; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); transition: all 0.3s; 
+        }
+        .input-box:focus { background: #FFF; outline: none; box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3); }
+        .input-box::placeholder { color: #A1887F; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-elements" id="bgCanvas"></div>
+
+    <svg style="display:none;">
+        <defs>
+            <g id="goodSunflower">
+                <rect x="-2" y="10" width="4" height="40" fill="#2ECC71"/>
+                <path d="M 0 25 Q -15 15 -20 25 Q -5 35 0 25" fill="#2ECC71"/>
+                <g fill="#FFCA28">
+                    <path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(0)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(45)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(90)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(135)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(180)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(225)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(270)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(315)"/>
+                </g>
+                <g fill="#FFB300">
+                    <path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(22.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(67.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(112.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(157.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(202.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(247.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(292.5)"/><path d="M 0 0 Q 8 -20 0 -30 Q -8 -20 0 0" transform="rotate(337.5)"/>
+                </g>
+                <circle cx="0" cy="0" r="14" fill="#5D4037"/>
+                <circle cx="0" cy="0" r="10" fill="#4E342E" stroke="#3E2723" stroke-width="2" stroke-dasharray="2,2"/>
+            </g>
+
+            <g id="cutePenguinBase">
+                <path d="M 100 25 Q 90 10 95 0 Q 105 10 100 25" fill="#212F3D"/>
+                <path d="M 65 175 Q 40 175 40 190 Q 60 195 75 180 Z" fill="#F39C12"/>
+                <path d="M 135 175 Q 160 175 160 190 Q 140 195 125 180 Z" fill="#F39C12"/>
+                <path d="M 100 25 C 50 25 35 90 35 145 C 35 185 65 185 100 185 C 135 185 165 185 165 145 C 165 90 150 25 100 25 Z" fill="#212F3D"/>
+                <path d="M 100 35 C 70 35 50 85 50 140 C 50 175 75 180 100 180 C 125 180 150 175 150 140 C 150 85 130 35 100 35 Z" fill="#FFFFFF"/>
+                <path d="M 100 100 L 85 90 L 85 110 Z" fill="#E74C3C"/>
+                <path d="M 100 100 L 115 90 L 115 110 Z" fill="#E74C3C"/>
+                <circle cx="100" cy="100" r="5" fill="#C0392B"/>
+            </g>
+            
+            <g id="sparkleEyes">
+                <g class="blink" style="transform-origin: 100px 65px;">
+                    <ellipse cx="78" cy="65" rx="9" ry="14" fill="#212F3D"/>
+                    <circle cx="80" cy="58" r="4" fill="#FFF"/>
+                    <circle cx="75" cy="68" r="2" fill="#FFF"/>
+                    <ellipse cx="122" cy="65" rx="9" ry="14" fill="#212F3D"/>
+                    <circle cx="124" cy="58" r="4" fill="#FFF"/>
+                    <circle cx="119" cy="68" r="2" fill="#FFF"/>
+                </g>
+                <circle cx="65" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                <circle cx="135" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+            </g>
+
+            <g id="happyBeak">
+                <path d="M 85 80 Q 100 95 115 80 Q 100 88 85 80" fill="#F1C40F"/>
+                <path d="M 88 83 Q 100 100 112 83 Z" fill="#E74C3C"/>
+            </g>
+
+            <g id="sadEyes">
+                <path d="M 70 60 Q 80 55 90 65" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <path d="M 110 65 Q 120 55 130 60" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <circle cx="65" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                <circle cx="135" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                <g style="animation: tearDrop 2s infinite;">
+                    <path d="M 70 70 Q 70 80 65 80 Q 60 80 60 70 L 65 65 Z" fill="#81D4FA"/>
+                </g>
+            </g>
+            <g id="sadBeak">
+                <path d="M 85 85 Q 100 78 115 85" stroke="#F1C40F" stroke-width="6" fill="none" stroke-linecap="round"/>
+            </g>
+
+            <polygon id="starTwinkle" points="10,0 13,7 20,8 15,13 16,20 10,16 4,20 5,13 0,8 7,7" fill="#FDD835"/>
+        </defs>
+    </svg>
+
+    <div class="page active" id="page1">
+        <svg class="penguin-svg bounce" viewBox="0 0 200 200">
+            <use href="#cutePenguinBase" />
+            <use href="#sparkleEyes" />
+            <use href="#happyBeak" />
+            <path d="M 40 100 Q 20 120 40 140 Q 55 125 50 100 Z" fill="#212F3D"/>
+            <path d="M 160 100 Q 180 120 160 140 Q 145 125 150 100 Z" fill="#212F3D"/>
+            
+            <g transform="translate(145, 125) scale(0.4) rotate(-20)"> <use href="#goodSunflower"/> </g>
+            <g transform="translate(165, 120) scale(0.4) rotate(20)"> <use href="#goodSunflower"/> </g>
+            <g transform="translate(155, 110) scale(0.5)"> <use href="#goodSunflower"/> </g>
+        </svg>
+        <h2 style="color: #E65100;">Oye...Pansandita Aurat..</h2>
+        <h3 style="color: #E65100;">I have got something for you !</h3>
+        <button onclick="goToPage('page2')">Open Message</button>
+    </div>
+
+    <div class="page" id="page2">
+        <div class="glass-panel" style="padding-top: 20px; padding-bottom: 20px;">
+            <svg class="penguin-svg bounce" viewBox="0 -10 200 210" style="width: 140px; height: 140px; margin-bottom: 0px;">
+                <use href="#cutePenguinBase" />
+                <path d="M 70 65 Q 80 50 90 65" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <path d="M 110 65 Q 120 50 130 65" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <circle cx="65" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                <circle cx="135" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                <use href="#happyBeak" />
+                <path class="beating-heart" d="M 100 80 C 70 60 40 100 100 140 C 160 100 130 60 100 80 Z" fill="#FF1744" style="transform-origin: 100px 105px;"/>
+                <path d="M 45 100 C 20 130 60 140 85 120 Z" fill="#212F3D"/>
+                <path d="M 155 100 C 180 130 140 140 115 120 Z" fill="#212F3D"/>
+            </svg>
+
+            <h2 style="color: #D84315; margin-bottom: 5px;">Thank You</h2>
+            <p style="font-size: 0.95rem; margin-bottom: 10px;">Tap the picture below to flip it</p>
+
+            <div class="single-polaroid" onclick="this.classList.toggle('flipped')">
+                <div class="single-polaroid-inner">
+                    <div class="single-polaroid-front">
+                        <img src="first.jpeg" onerror="this.style.display='none'">
+                    </div>
+                    <div class="single-polaroid-back">
+                        <p>Thank you so much for this.... This is the cutest thing I ever recieved ! I really really really loved. I am always going to keep this with me ! 🥺❤️🌻</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="goToPage('page3')" style="margin-top: 5px;">Continue</button>
+        </div>
+    </div>
+
+    <div class="page" id="page3">
+        <div class="glass-panel" style="padding-top: 20px; padding-bottom: 20px;">
+            <svg class="penguin-svg" viewBox="0 0 250 200" style="width: 170px; height: 130px; margin-bottom: 0px; overflow: visible;">
+                <g transform="translate(-10, 20) scale(0.75)">
+                    <g class="dance-partner" style="transform-origin: 100px 180px;">
+                        <use href="#cutePenguinBase" />
+                        <use href="#sparkleEyes" />
+                        <use href="#happyBeak" />
+                        <path d="M 40 100 Q 10 70 30 50 Q 50 70 50 100 Z" fill="#212F3D"/> 
+                        <path d="M 150 100 L 190 110 L 150 120 Z" fill="#212F3D"/> 
+                    </g>
+                </g>
+                <g transform="translate(60, 20) scale(0.75)">
+                    <g class="dance-partner" style="transform-origin: 100px 180px;">
+                        <use href="#cutePenguinBase" />
+                        <use href="#sparkleEyes" />
+                        <use href="#happyBeak" />
+                        <circle cx="65" cy="75" r="12" fill="#FF1744" opacity="0.6"/> 
+                        <circle cx="135" cy="75" r="12" fill="#FF1744" opacity="0.6"/> 
+                        <path d="M 50 100 L 10 110 L 50 120 Z" fill="#212F3D"/> 
+                        <path d="M 160 100 Q 190 70 170 50 Q 150 70 150 100 Z" fill="#212F3D"/> 
+                    </g>
+                </g>
+                <g transform="translate(115, 15) scale(0.8)"> <use href="#starTwinkle" class="twinkle" style="animation-delay: 0s;"/> </g>
+                <g transform="translate(145, 30) scale(0.6)"> <use href="#starTwinkle" class="twinkle" style="animation-delay: 0.3s;"/> </g>
+                <g transform="translate(100, 45) scale(0.5)"> <use href="#starTwinkle" class="twinkle" style="animation-delay: 0.6s;"/> </g>
+                <g transform="translate(170, 10) scale(0.7)"> <use href="#starTwinkle" class="twinkle" style="animation-delay: 0.9s;"/> </g>
+            </svg>
+
+            <h2 style="color: #D84315; margin-bottom: 5px;">Our Perfect Date...</h2>
+            <p style="font-size: 0.95rem; margin-bottom: 10px;">Tap the video below to flip it</p>
+
+            <div class="single-polaroid" onclick="this.classList.toggle('flipped')">
+                <div class="single-polaroid-inner">
+                    <div class="single-polaroid-front">
+                        <video src="second.mp4" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;" onerror="this.style.display='none'"></video>
+                    </div>
+                    <div class="single-polaroid-back" style="padding: 15px;">
+                        <p style="font-size: 0.95rem; margin: 0;">This was the best date with you... I truly loved the time we spent together. I didn't even realize how fast those four hours flew by, but every single minute and second was worth it. 🥰❤️</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="goToPage('page4')" style="margin-top: 5px;">Continue</button>
+        </div>
+    </div>
+
+    <div class="page" id="page4">
+        <div class="glass-panel" style="padding-top: 20px; padding-bottom: 20px;">
+            <svg class="penguin-svg bounce" viewBox="0 0 200 200" style="width: 140px; height: 140px; margin-bottom: 0px;">
+                <use href="#cutePenguinBase" />
+                <path d="M 72 60 L 80 65 L 72 70" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M 128 60 L 120 65 L 128 70" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="65" cy="72" r="14" fill="#FF1744" opacity="0.6"/>
+                <circle cx="135" cy="72" r="14" fill="#FF1744" opacity="0.6"/>
+                <use href="#happyBeak" />
+                <g transform="rotate(45 60 95)">
+                    <ellipse cx="60" cy="95" rx="16" ry="40" fill="#212F3D" />
+                    <ellipse cx="63" cy="95" rx="5" ry="32" fill="#34495E" />
+                </g>
+                <g transform="rotate(-45 140 95)">
+                    <ellipse cx="140" cy="95" rx="16" ry="40" fill="#212F3D" />
+                    <ellipse cx="137" cy="95" rx="5" ry="32" fill="#34495E" />
+                </g>
+            </svg>
+
+            <h2 style="color: #D84315; margin-bottom: 5px;">My Favorite</h2>
+            <p style="font-size: 0.95rem; margin-bottom: 10px;">Tap the picture below to flip it</p>
+
+            <div class="single-polaroid" onclick="this.classList.toggle('flipped')">
+                <div class="single-polaroid-inner">
+                    <div class="single-polaroid-front">
+                        <img src="third.jpeg" onerror="this.style.display='none'">
+                    </div>
+                    <div class="single-polaroid-back" style="padding: 15px;">
+                        <p style="font-size: 0.95rem; margin: 0;">Cutie... You looked so incredibly gorgeous that day. 🙈 Well, you always look beautiful, but that day I honestly couldn't take my eyes off you. 🐒❤️✨</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="goToPage('page5')" style="margin-top: 5px;">Continue</button>
+        </div>
+    </div>
+
+    <div class="page" id="page5">
+        <div class="glass-panel" style="padding-top: 20px; padding-bottom: 20px;">
+            <svg class="penguin-svg" viewBox="0 0 200 200" style="height: 130px; margin-bottom: 5px;">
+                <use href="#cutePenguinBase" />
+                <g class="blink" style="transform-origin: 78px 65px;">
+                    <circle cx="78" cy="65" r="8" fill="#212F3D"/>
+                    <circle cx="80" cy="63" r="3" fill="#FFF"/>
+                </g>
+                <path d="M 115 65 L 130 65" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <use href="#happyBeak" />
+                
+                <path d="M 40 100 Q 20 120 40 140 Q 55 125 50 100 Z" fill="#212F3D"/>
+                
+                <rect x="65" y="105" width="70" height="45" rx="8" fill="#E67E22"/>
+                <rect x="65" y="105" width="70" height="15" rx="8" fill="#D35400"/>
+                <circle cx="80" cy="112" r="5" fill="#FFF"/> 
+                <circle id="cameraLens" cx="100" cy="130" r="16" fill="#212F3D"/>
+                <circle cx="100" cy="130" r="8" fill="#5DADE2" opacity="0.6"/>
+                
+                <g id="clickingArm" style="transform-origin: 150px 100px;">
+                    <path d="M 160 100 Q 180 120 160 140 Q 145 125 150 100 Z" fill="#212F3D"/>
+                </g>
+            </svg>
+
+            <h2 style="color: #D84315; margin-bottom: 5px;">Cutest Smile</h2>
+            <p style="font-size: 0.95rem; margin-bottom: 10px;">Tap the picture below to flip it</p>
+            
+            <div style="position: relative; display: inline-block; margin-bottom: 15px;">
+                <div id="screenFlash"></div>
+                <div class="single-polaroid" onclick="triggerCamera(this)" style="margin: 0;">
+                    <div class="single-polaroid-inner">
+                        <div class="single-polaroid-front">
+                            <img src="fourth.jpeg" onerror="this.style.display='none'">
+                        </div>
+                        <div class="single-polaroid-back" style="padding: 15px;">
+                            <p style="font-size: 0.95rem; margin: 0;">Cutie... You are my favorite person. Teri smile itni dangerous hai kya bataun main... And those eyes! 😍 Jitne compliments tujhe doon, utne kam hain. I am just obsessed with you. I wish you keep this cuteness and smile forever, aur main bhi try karunga ki yeh hamesha barkarar rahe. ❤️✨</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="goToPage('page6')" style="margin-top: 5px;">Keep going</button>
+        </div>
+    </div>
+
+    <div class="page" id="page6">
+        <div class="glass-panel" style="padding-top: 20px; padding-bottom: 20px;">
+            <svg id="penguinPage6" class="penguin-svg bounce" viewBox="0 -40 200 240">
+                <use href="#cutePenguinBase" />
+                
+                <g id="p6Happy">
+                    <path d="M 70 65 Q 80 50 90 65" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path d="M 110 65 Q 120 50 130 65" stroke="#212F3D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <circle cx="65" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                    <circle cx="135" cy="75" r="8" fill="#FFCDD2" opacity="0.9"/>
+                    <use href="#happyBeak" />
+                    <path d="M 40 100 Q 10 140 30 170 Q 45 140 50 100 Z" fill="#212F3D"/>
+                    <path d="M 160 100 Q 190 140 170 170 Q 155 140 150 100 Z" fill="#212F3D"/>
+                    <path id="p6Heart" class="beating-heart" d="M 100 -5 C 70 -30 40 10 100 40 C 160 10 130 -30 100 -5 Z" fill="#FF1744"/>
+                </g>
+
+                <g id="p6Panic" style="display:none;">
+                    <circle cx="80" cy="65" r="12" fill="#212F3D"/>
+                    <circle cx="80" cy="62" r="4" fill="#FFF"/>
+                    <circle cx="120" cy="65" r="12" fill="#212F3D"/>
+                    <circle cx="120" cy="62" r="4" fill="#FFF"/>
+                    <path d="M 85 85 L 95 80 L 100 90 L 105 80 L 115 85" stroke="#212F3D" stroke-width="3" fill="none"/>
+                    <path d="M 40 90 Q 10 60 20 40 Q 40 60 50 90 Z" fill="#212F3D"/>
+                    <path d="M 160 90 Q 190 60 180 40 Q 160 60 150 90 Z" fill="#212F3D"/>
+                    <path d="M 145 20 Q 160 40 145 50 Q 130 40 145 20 Z" fill="#29B6F6"/>
+                </g>
+            </svg>
+
+            <h2 style="color: #D84315; margin-bottom: 5px;">A little chaotic...</h2>
+            <div class="slider-container">
+                <p style="font-size:0.95rem; margin-bottom: 10px;">Scale 1-10: How much will you miss me?</p>
+                <input type="range" id="missSlider" min="1" max="10" value="10" oninput="handleSliderMove(this.value)">
+                <span id="sliderValueDisplay">10</span>
+            </div>
+            
+            <button onclick="goToPage('page7')">Continue</button>
+        </div>
+    </div>
+
+    <div class="page" id="page7">
+        <div class="glass-panel" style="padding-top: 20px; padding-bottom: 20px;">
+            <svg class="penguin-svg bounce" viewBox="0 0 200 200" style="width: 120px; height: 120px; margin-bottom: 0px;">
+                <use href="#cutePenguinBase" />
+                <use href="#sadEyes" />
+                <use href="#sadBeak" />
+                
+                <path d="M 40 100 Q 70 120 90 110" stroke="#212F3D" stroke-width="15" fill="none" stroke-linecap="round"/>
+                <path d="M 160 100 Q 130 120 110 110" stroke="#212F3D" stroke-width="15" fill="none" stroke-linecap="round"/>
+            </svg>
+
+            <h2 style="color: #D84315; margin-bottom: 5px;">My Last Words...</h2>
+            
+            <div class="love-note">
+                Beta... I am going to miss you a lot. I know there have been ups and downs between us, aur long distance bhi hai. I even know tu bohot confused bhi hai, but trust me, I will always be there to support you.<br><br>
+                Guddu... Maanja yrrr! 😂 Thak gaya hu yaar ab 🤣. I know tujhe trust issues hain, but I really like you, and I will always be loyal aur kabhi tera trust break nahi karunga.<br><br>
+                Anyway, it's up to you now. Apna dhyan rakhna. See you next September! ❤️
+            </div>
+
+            <button onclick="goToPage('page8')">Continue</button>
+        </div>
+    </div>
+
+    <div class="page" id="page8">
+        <div class="glass-panel">
+            <svg class="penguin-svg bounce" viewBox="0 0 200 200" style="height: 150px;">
+                <use href="#cutePenguinBase" />
+                <use href="#happyBeak" />
+                
+                <g class="blink" style="transform-origin: 100px 65px;">
+                    <ellipse cx="78" cy="65" rx="8" ry="6" fill="#212F3D"/>
+                    <circle cx="80" cy="63" r="2" fill="#FFF"/>
+                    <ellipse cx="122" cy="65" rx="8" ry="6" fill="#212F3D"/>
+                    <circle cx="124" cy="63" r="2" fill="#FFF"/>
+                </g>
+                
+                <circle id="blushLeft" cx="65" cy="75" r="12" fill="#FF1744" opacity="0" transition="opacity 0.4s"/>
+                <circle id="blushRight" cx="135" cy="75" r="12" fill="#FF1744" opacity="0" transition="opacity 0.4s"/>
+                
+                <path d="M 40 100 Q 20 120 40 140 Q 55 125 50 100 Z" fill="#212F3D"/>
+                <path d="M 160 100 Q 180 120 160 140 Q 145 125 150 100 Z" fill="#212F3D"/>
+                <rect x="65" y="110" width="70" height="40" fill="#FFF"/>
+                <path d="M 65 110 L 100 135 L 135 110" fill="none" stroke="#E74C3C" stroke-width="2"/>
+                <circle cx="100" cy="135" r="6" fill="#E74C3C"/>
+            </svg>
+
+            <h1 style="margin-bottom: 5px;">I love you.</h1>
+            <p>Your turn. Don't leave me hanging.</p>
+            
+            <input type="text" id="favMoment" class="input-box" placeholder="Say it back ?" onfocus="makePenguinBlush()" onblur="removePenguinBlush()">
+            <input type="text" id="sayItBack" class="input-box" placeholder="Anything you want express or say ?" onfocus="makePenguinBlush()" onblur="removePenguinBlush()">
+            
+            <button onclick="sendToWhatsApp()" style="width: 100%;">Send to my Penguin</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bgCanvas');
+        
+        const items = [
+            `<svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="#FFCA28"><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(0)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(45)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(90)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(135)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(180)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(225)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(270)"/><path d="M 0 0 Q 10 -25 0 -35 Q -10 -25 0 0" transform="rotate(315)"/></g><circle cx="0" cy="0" r="14" fill="#5D4037"/></svg>`,
+            `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M 50 85 C 10 55 10 20 30 10 C 45 5 50 15 50 20 C 50 15 55 5 70 10 C 90 20 90 55 50 85 Z" fill="#FF5252" opacity="0.8"/></svg>`,
+            `<svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="#F48FB1"><circle cx="0" cy="-20" r="15"/><circle cx="0" cy="20" r="15"/><circle cx="-20" cy="0" r="15"/><circle cx="20" cy="0" r="15"/><circle cx="-15" cy="-15" r="15"/><circle cx="15" cy="15" r="15"/><circle cx="-15" cy="15" r="15"/><circle cx="15" cy="-15" r="15"/></g><circle cx="0" cy="0" r="12" fill="#FFF59D"/></svg>`,
+            `<svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="#81D4FA"><path d="M 0 0 C -20 -30 20 -30 0 0" transform="rotate(0)"/><path d="M 0 0 C -20 -30 20 -30 0 0" transform="rotate(72)"/><path d="M 0 0 C -20 -30 20 -30 0 0" transform="rotate(144)"/><path d="M 0 0 C -20 -30 20 -30 0 0" transform="rotate(216)"/><path d="M 0 0 C -20 -30 20 -30 0 0" transform="rotate(288)"/></g><circle cx="0" cy="0" r="6" fill="#FFF"/></svg>`,
+            `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="25" r="15" fill="#A1887F"/><circle cx="75" cy="25" r="15" fill="#A1887F"/><circle cx="50" cy="55" r="35" fill="#8D6E63"/><ellipse cx="50" cy="65" rx="15" ry="10" fill="#D7CCC8"/><circle cx="50" cy="62" r="3" fill="#3E2723"/><circle cx="35" cy="45" r="4" fill="#3E2723"/><circle cx="65" cy="45" r="4" fill="#3E2723"/></svg>`,
+            `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="35" cy="30" rx="10" ry="25" fill="#FFF"/><ellipse cx="35" cy="30" rx="5" ry="15" fill="#F8BBD0"/><ellipse cx="65" cy="30" rx="10" ry="25" fill="#FFF"/><ellipse cx="65" cy="30" rx="5" ry="15" fill="#F8BBD0"/><circle cx="50" cy="60" r="30" fill="#FFF"/><circle cx="40" cy="55" r="3" fill="#333"/><circle cx="60" cy="55" r="3" fill="#333"/><circle cx="50" cy="62" r="3" fill="#F06292"/></svg>`,
+            `<svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="#FFFFFF"><circle cx="0" cy="-20" r="15"/><circle cx="0" cy="20" r="15"/><circle cx="-20" cy="0" r="15"/><circle cx="20" cy="0" r="15"/><circle cx="-15" cy="-15" r="15"/><circle cx="15" cy="15" r="15"/><circle cx="-15" cy="15" r="15"/><circle cx="15" cy="-15" r="15"/></g><circle cx="0" cy="0" r="12" fill="#FFCA28"/></svg>`,
+            `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="25" r="15" fill="#212121"/><circle cx="75" cy="25" r="15" fill="#212121"/><circle cx="50" cy="55" r="35" fill="#FFFFFF"/><ellipse cx="35" cy="45" rx="10" ry="12" fill="#212121" transform="rotate(-20 35 45)"/><ellipse cx="65" cy="45" rx="10" ry="12" fill="#212121" transform="rotate(20 65 45)"/><circle cx="35" cy="43" r="3" fill="#FFFFFF"/><circle cx="65" cy="43" r="3" fill="#FFFFFF"/><ellipse cx="50" cy="62" rx="12" ry="8" fill="#F5F5F5"/><circle cx="50" cy="60" r="3" fill="#212121"/></svg>`
+        ];
+
+        for(let i = 0; i < 75; i++) {
+            let el = document.createElement('div');
+            el.className = 'floating-item';
+            el.innerHTML = items[Math.floor(Math.random() * items.length)];
+            el.style.width = Math.random() * 35 + 20 + 'px';
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.animationDuration = Math.random() * 8 + 8 + 's';
+            el.style.animationDelay = (Math.random() * -15) + 's';
+            canvas.appendChild(el);
+        }
+
+        function goToPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Slider Logic for Page 6 (Happy ONLY if value > 7)
+        const p6SVG = document.getElementById('penguinPage6');
+        const p6Happy = document.getElementById('p6Happy');
+        const p6Panic = document.getElementById('p6Panic');
+        const displayVal = document.getElementById('sliderValueDisplay');
+        const p6Heart = document.getElementById('p6Heart');
+
+        function handleSliderMove(val) {
+            if(!displayVal) return;
+            displayVal.innerText = val;
+            if (val <= 7) {
+                p6SVG.classList.remove('bounce');
+                p6SVG.classList.add('shake');
+                p6Happy.style.display = 'none';
+                p6Panic.style.display = 'block';
+                displayVal.style.color = "#D32F2F"; 
+            } else {
+                p6SVG.classList.remove('shake');
+                p6SVG.classList.add('bounce');
+                p6Panic.style.display = 'none';
+                p6Happy.style.display = 'block';
+                displayVal.style.color = "#E65100"; 
+                if(p6Heart) {
+                    p6Heart.style.animation = 'none';
+                    void p6Heart.offsetWidth; 
+                    p6Heart.style.animation = 'beat 0.8s ease-in-out infinite alternate';
+                }
+            }
+        }
+
+        function triggerCamera(element) {
+            element.classList.toggle('flipped');
+            
+            const arm = document.getElementById('clickingArm');
+            if(arm) {
+                arm.classList.remove('click-arm');
+                void arm.offsetWidth;
+                arm.classList.add('click-arm');
+            }
+            
+            const lens = document.getElementById('cameraLens');
+            if(lens) {
+                lens.classList.remove('click-lens');
+                void lens.offsetWidth;
+                lens.classList.add('click-lens');
+            }
+
+            const screenFlash = document.getElementById('screenFlash');
+            if(screenFlash) {
+                screenFlash.classList.remove('flash-active');
+                void screenFlash.offsetWidth;
+                screenFlash.classList.add('flash-active');
+            }
+        }
+
+        function makePenguinBlush() {
+            document.getElementById('blushLeft').style.opacity = '0.75';
+            document.getElementById('blushRight').style.opacity = '0.75';
+        }
+        function removePenguinBlush() {
+            document.getElementById('blushLeft').style.opacity = '0';
+            document.getElementById('blushRight').style.opacity = '0';
+        }
+
+        function sendToWhatsApp() {
+            const phoneNumber = "919503454724"; // CHANGE THIS NUMBER TO YOURS!
+            const sliderValue = document.getElementById('missSlider').value;
+            const moment = document.getElementById('favMoment').value;
+            const confession = document.getElementById('sayItBack').value;
+
+            const message = `Hey! I finished your website! 🐧🌻\n\n` +
+                            `How much I'll miss you: ${sliderValue}/10\n` +
+                            `Favorite moment: ${moment}\n` +
+                            `And... ${confession}`;
+
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.location.href = whatsappUrl;
+        }
+    </script>
+</body>
+</html>
